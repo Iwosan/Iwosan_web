@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { Activity, Menu, X } from 'lucide-react';
 
 const navLinks = [
+  { href: '/marketplace', label: 'Marketplace' },
   { href: '/#features', label: 'Features' },
   { href: '/#how-it-works', label: 'How It Works' },
   { href: '/#stats', label: 'Network' },
@@ -39,7 +40,7 @@ export default function Navbar() {
             <Activity className="w-4 h-4 relative z-10" style={{ color: '#00C896' }} />
           </div>
           <span className="text-base font-bold tracking-tight text-text-1">
-            Healthy<span style={{ color: '#00C896' }}>Stellar</span>
+            Iwo<span style={{ color: '#00C896' }}>san</span>
           </span>
         </Link>
 

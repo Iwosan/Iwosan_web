@@ -1,40 +1,29 @@
-# Healthy-Stellar-frontend
+# Iwosan Web
 
-Health-chain-stellar
+Next.js frontend for Iwosan.
 
-Tagline: Instant verification, infinite traceability.
+**Iwosan** (Yoruba: *healing*) is a healthcare marketplace on the Stellar network. It lets hospitals, clinics, pharmacies, traditional medicine practitioners and patients:
 
-Health-chain is an innovative healthcare platform built on the Stellar blockchain, designed to address the challenges faced by the medical industry today. With fragmented patient records, inefficient verification processes, and security risks, VitaCare provides a comprehensive solution for secure, efficient, and transparent healthcare management. By leveraging blockchain technology, VitaCare ensures that medical records are immutable, easily accessible, and verifiable in real time, enhancing the overall healthcare experience for medical institutions, professionals, and patients. Objectives
+- **Buy, sell and rent medical equipment**: wheelchairs, oxygen concentrators, hospital beds, diagnostic devices.
+- **Buy orthodox and native drugs**: pharmaceutical drugs and traditional/herbal medicine, each listed with its regulatory number (e.g. NAFDAC).
+- **Hire medical personnel**: nurses, doctors, lab scientists and caregivers, by the day or shift, with licences verified.
 
-Secure Registration and Verification: Allow medical entities and professionals to securely register their credentials on a tamper-proof blockchain ledger, ensuring their certifications are verifiable and immutable.
+Payments are held in a Soroban escrow contract and released to the seller only when the buyer confirms delivery or service. Disputes are resolved by the Iwosan verification desk.
 
-Decentralized and Secure Medical Records Management: Enable patients to store, manage, and share their medical history securely, with encrypted access protected by blockchain.
+### Gaps Iwosan addresses
 
-Efficient Appointment Scheduling and Payment System: Provide a user-friendly platform for booking appointments (both in-person and telemedicine) and processing payments via cryptocurrency (Stellar) or traditional methods.
+| Problem | How Iwosan handles it |
+|---|---|
+| Counterfeit and unregistered drugs | Drug listings must be verified (regulatory number checked) before they can be ordered |
+| Traditional medicine has no trusted channel | Native drugs are a first-class category, with the same verification as orthodox drugs |
+| Expensive equipment sits idle or is out of reach | Equipment can be rented by the day as well as sold |
+| Hard to find vetted medical staff quickly | Personnel listings are hire-only and need a verified practising licence |
+| Paying strangers upfront is risky | Stellar escrow: funds release only on confirmation, refund otherwise |
+| Slow, costly cross-border payment | Settlement in USDC/XLM on Stellar in seconds, at low fees |
 
-Integration with Insurance and Emergency Services: Simplify insurance verification and claims with smart contracts and enable ambulance requests and home medical checkups directly through the platform.
+The existing clinical modules (records, appointments, pharmacy, lab, telemedicine) remain and support the marketplace.
 
-Features
-
-Enhanced Security: Patient data is stored securely on the Stellar blockchain, preventing unauthorized modifications and ensuring data integrity.
-
-Seamless Appointment Scheduling: Patients can easily book in-person and online consultations with doctors, reducing friction in the process.
-
-Flexible Payment Methods: Payments for medical services can be made through cryptocurrency (Stellar) or traditional methods, providing options for users across different regions.
-
-Interoperability: Patients' medical histories, test results, and other vital information can be shared securely between different healthcare providers.
-
-Decentralized Data Management: Blockchain ensures that medical records are not stored on a centralized server, minimizing the risk of data breaches or unauthorized access.
-
-Smart Contract Integration: Streamlined insurance claims, emergency service requests, and medical verification processes are automated through smart contracts.
-
-Target Users
-
-Medical Professionals: Doctors and medical staff who want an efficient way to manage their profiles, receive payments, and maintain accurate patient records.
-
-Patients: Individuals seeking a secure, transparent way to store, access, and share their medical history with various healthcare providers.
-
-Insurance Providers: Companies offering health coverage that want to integrate blockchain-based verification into their policies.
+The marketplace UI lives at `/marketplace` (`src/app/marketplace/page.tsx`).
 
 Prerequisites
 
@@ -49,11 +38,11 @@ To get a local copy up and running, follow these steps:
 
 Clone the repository:
 
-git clone https://github.com/your-username/Healthy-Stellar-frontend.git
+git clone https://github.com/Iwosan/Iwosan_web.git
 
 Navigate to the project directory:
 
-cd Healthy-Stellar-frontend
+cd Iwosan_web
 
 Install dependencies:
 
@@ -120,7 +109,7 @@ To point the frontend at the Stellar mainnet, update these variables in `.env.lo
 ```
 NEXT_PUBLIC_STELLAR_NETWORK=mainnet
 NEXT_PUBLIC_HORIZON_URL=https://horizon.stellar.org
-NEXT_PUBLIC_API_URL=https://api.healthy-stellar.io/v1
+NEXT_PUBLIC_API_URL=https://api.iwosan.io/v1
 ```
 
 **Security implications:**

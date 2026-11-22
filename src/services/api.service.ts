@@ -270,3 +270,31 @@ export const bulkUpdateStaff = (
  */
 export const bulkImportRecords = (patientAddress: string, records: BulkRecordImportRow[]) =>
   api.post<BulkImportResponse>('/records/batch', { patientAddress, records }).then((r) => r.data);
+
+export type ListingKind = 'equipment' | 'orthodox_drug' | 'native_drug' | 'personnel';
+export type TradeMode = 'sale' | 'rental' | 'hire';
+
+export interface MarketplaceListing {
+  id: string;
+  kind: ListingKind;
+  mode: TradeMode;
+  title: string;
+  description?: string;
+  unitPrice: string;
+  currency: string;
+  stock: number;
+  location?: string;
+  regulatoryNumber?: string;
+  verified: boolean;
+}
+
+/**
+ * Fetch verified Iwosan marketplace listings (equipment, drugs, personnel).
+ * @param filters - Optional kind, mode and title search.
+ * @returns Array of {@link MarketplaceListing}.
+ * @throws {ApiError} On network failure or non-2xx response.
+ */
+export const fetchMarketplaceListings = (
+  filters: { kind?: ListingKind; mode?: TradeMode; search?: string } = {},
+) =>
+  api.get<MarketplaceListing[]>('/marketplace/listings', { params: filters }).then((r) => r.data);
