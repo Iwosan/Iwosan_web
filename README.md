@@ -23,6 +23,17 @@ Payments are held in a Soroban escrow contract and released to the seller only w
 
 The existing clinical modules (records, appointments, pharmacy, lab, telemedicine) remain and support the marketplace.
 
+### Stellar roadmap
+
+Planned frontend work (full plan in [docs/STELLAR_ROADMAP.md](docs/STELLAR_ROADMAP.md)):
+
+- **Onboarding:** passkey smart-wallet sign-in with no seed phrase ([#2](https://github.com/Iwosan/Iwosan_web/issues/2))
+- **Marketplace:** listing detail with escrow checkout ([#3](https://github.com/Iwosan/Iwosan_web/issues/3)), my orders with confirm/refund/dispute ([#4](https://github.com/Iwosan/Iwosan_web/issues/4)), seller dashboard ([#10](https://github.com/Iwosan/Iwosan_web/issues/10))
+- **Payments:** pay in local currency through path payments ([#5](https://github.com/Iwosan/Iwosan_web/issues/5)), cash in/out with a SEP-24 anchor ([#7](https://github.com/Iwosan/Iwosan_web/issues/7))
+- **Drug safety:** scan-to-verify drug batch page ([#6](https://github.com/Iwosan/Iwosan_web/issues/6))
+- **Funding care:** treatment crowdfunding ([#8](https://github.com/Iwosan/Iwosan_web/issues/8)), ajo/esusu savings groups ([#9](https://github.com/Iwosan/Iwosan_web/issues/9))
+- **Local experience:** prices in NGN/USDC/XLM, plus Yoruba, Hausa and Igbo ([#11](https://github.com/Iwosan/Iwosan_web/issues/11))
+
 The marketplace UI lives at `/marketplace` (`src/app/marketplace/page.tsx`).
 
 Prerequisites
