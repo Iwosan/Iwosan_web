@@ -323,19 +323,19 @@ export default function HomePage() {
               </div>
 
               <h1 className="text-[2.75rem] sm:text-5xl lg:text-[3.5rem] font-bold leading-[1.08] tracking-[-0.02em] text-text-1 mb-5">
-                Healthcare data
+                Healing, traded
                 <br />
-                <span style={{ color: '#00C896' }}>owned by you.</span>
+                <span style={{ color: '#00C896' }}>with trust.</span>
               </h1>
 
               <p className="text-base sm:text-lg text-text-2 leading-relaxed mb-8 max-w-lg">
-                A decentralized platform for patients and clinicians to manage medical records with
-                complete sovereignty — secured by cryptography on the Stellar network.
+                Buy or rent medical equipment, order verified orthodox and native drugs, and hire
+                licensed medical personnel. Every payment is held in Stellar escrow until delivery.
               </p>
 
               <div className="flex flex-col sm:flex-row gap-3 mb-10">
-                <Link href="/login" className="btn-primary rounded-[10px] px-6 py-3 text-sm">
-                  Get Started Free
+                <Link href="/marketplace" className="btn-primary rounded-[10px] px-6 py-3 text-sm">
+                  Browse Marketplace
                   <ArrowRight className="w-4 h-4" />
                 </Link>
                 <Link
@@ -349,7 +349,7 @@ export default function HomePage() {
 
               {/* Trust badges */}
               <div className="flex flex-wrap gap-5">
-                {['HIPAA Compliant', 'Non-Custodial', 'Open Source', 'Audited'].map((badge) => (
+                {['Verified Sellers', 'Escrow Payments', 'Native & Orthodox', 'Open Source'].map((badge) => (
                   <div key={badge} className="flex items-center gap-1.5 text-sm text-text-2">
                     <CheckCircle2 className="w-3.5 h-3.5 shrink-0" style={{ color: '#00C896' }} />
                     {badge}
@@ -559,7 +559,7 @@ export default function HomePage() {
               Designed for every stakeholder
             </h2>
             <p className="text-text-2 text-base">
-              Whether you are a patient, clinician, or institution, HealthyStellar has role-specific
+              Whether you are a patient, clinician, or institution, Iwosan has role-specific
               tools built for your workflow.
             </p>
           </div>

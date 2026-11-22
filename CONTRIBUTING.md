@@ -1,4 +1,4 @@
-# Contributing to Healthy-Stellar
+# Contributing to Iwosan
 
 Thank you for your interest in contributing! This guide will help you get your local environment running, understand our workflow, and submit high-quality pull requests.
 
@@ -43,8 +43,8 @@ You need a funded testnet account to interact with the app locally:
 
 ```bash
 # 1. Fork the repository on GitHub, then clone your fork
-git clone https://github.com/<your-username>/Healthy-Stellar-frontend.git
-cd Healthy-Stellar-frontend
+git clone https://github.com/<your-username>/Iwosan-web.git
+cd Iwosan-web
 
 # 2. Install dependencies
 npm install
