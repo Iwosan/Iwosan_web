@@ -19,7 +19,11 @@ import api, {
   bulkImportRecords,
 } from '@/services/api.service';
 
+// `var`, not `let`: jest.mock is hoisted above these lines and assigns them
+// while api.service is imported, which would hit the `let` temporal dead zone.
+// eslint-disable-next-line no-var
 var mockInterceptorFulfilled: (res: any) => any;
+// eslint-disable-next-line no-var
 var mockInterceptorRejected: (err: any) => Promise<any>;
 
 jest.mock('axios', () => {
@@ -28,6 +32,7 @@ jest.mock('axios', () => {
     post: jest.fn(),
     patch: jest.fn(),
     interceptors: {
+      request: { use: jest.fn() },
       response: {
         use: jest.fn((fulfilled, rejected) => {
           mockInterceptorFulfilled = fulfilled;
