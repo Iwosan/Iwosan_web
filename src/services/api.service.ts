@@ -30,6 +30,21 @@ export interface ApiError {
   data: unknown;
 }
 
+// Access token from the wallet (SEP-10) login, kept in memory only.
+let apiAuthToken: string | null = null;
+
+/** Set or clear the bearer token sent with API requests. */
+export function setApiAuthToken(token: string | null): void {
+  apiAuthToken = token;
+}
+
+api.interceptors.request.use((config) => {
+  if (apiAuthToken) {
+    config.headers.set('Authorization', `Bearer ${apiAuthToken}`);
+  }
+  return config;
+});
+
 // Normalize error responses into a consistent shape
 api.interceptors.response.use(
   (response) => response,
