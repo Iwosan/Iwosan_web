@@ -7,9 +7,15 @@ import { useParams } from 'next/navigation';
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { ArrowLeft, BadgeCheck, CheckCircle2, Loader2, ShieldCheck } from 'lucide-react';
+import PaymentAssetPicker from '@/components/marketplace/PaymentAssetPicker';
 import { useToast } from '@/hooks/useToast';
 import { placeOrder, type SubmitOrderResult } from '@/lib/marketplace';
-import { fetchMarketplaceListing } from '@/services/api.service';
+import { QUOTE_REFRESH_MS, convertForCheckout, isQuoteExpired } from '@/lib/pathPayment';
+import {
+  fetchMarketplaceListing,
+  fetchMarketplaceQuote,
+  type ApiError,
+} from '@/services/api.service';
 import { useWalletStore } from '@/store/useWalletStore';
 
 const modeLabel = {
@@ -40,11 +46,33 @@ export default function ListingDetailPage() {
   const [result, setResult] = useState<SubmitOrderResult | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  const { data: listing, isLoading, isError } = useQuery({
+  const {
+    data: listing,
+    isLoading,
+    isError,
+  } = useQuery({
     queryKey: ['marketplace-listing', id],
     queryFn: () => fetchMarketplaceListing(id as string),
     enabled: Boolean(id),
   });
+
+  const [payAsset, setPayAsset] = useState<string | null>(null);
+  const paymentAsset = payAsset ?? listing?.currency ?? 'USDC';
+  const converting = Boolean(listing && paymentAsset !== listing.currency);
+
+  const quoteQuery = useQuery({
+    queryKey: ['marketplace-quote', id, units, paymentAsset],
+    queryFn: () =>
+      fetchMarketplaceQuote({ listingId: id as string, units, sourceAsset: paymentAsset }),
+    enabled: Boolean(id) && converting,
+    refetchInterval: QUOTE_REFRESH_MS,
+    retry: false,
+  });
+  const quoteError = quoteQuery.isError
+    ? (quoteQuery.error as unknown as ApiError).status === 404
+      ? `No ${paymentAsset} payment route is available for this listing right now.`
+      : 'Could not get a conversion rate. Try again shortly.'
+    : null;
 
   const maxUnits = listing?.mode === 'sale' ? Math.max(listing.stock, 0) : 99;
   const total = listing ? Number(listing.unitPrice) * units : 0;
@@ -54,6 +82,18 @@ export default function ListingDetailPage() {
     setSubmitting(true);
     setError(null);
     try {
+      if (converting) {
+        // Never sign against a stale rate: refresh the quote if it has expired.
+        let quote = quoteQuery.data;
+        if (!quote || isQuoteExpired(quote)) {
+          quote = (await quoteQuery.refetch({ throwOnError: true })).data;
+        }
+        if (!quote) {
+          throw new Error('Could not get a conversion rate. Try again shortly.');
+        }
+        await convertForCheckout(quote);
+        toast(`Converted ${paymentAsset} to ${listing.currency}.`, 'success');
+      }
       const submitted = await placeOrder(listing, units);
       setResult(submitted);
       toast('Order placed — your payment is held in escrow.', 'success');
@@ -77,9 +117,7 @@ export default function ListingDetailPage() {
 
       {isLoading && <p className="mt-8 text-text-2">Loading listing…</p>}
       {isError && (
-        <p className="mt-8 text-red-400">
-          Could not load this listing. It may have been removed.
-        </p>
+        <p className="mt-8 text-red-400">Could not load this listing. It may have been removed.</p>
       )}
 
       {listing && (
@@ -147,9 +185,7 @@ export default function ListingDetailPage() {
                 Your payment is held in Stellar escrow until you confirm delivery.
               </p>
               <p className="mt-2 break-all text-xs text-text-3">Transaction: {result.hash}</p>
-              {result.orderId && (
-                <p className="text-xs text-text-3">Order #{result.orderId}</p>
-              )}
+              {result.orderId && <p className="text-xs text-text-3">Order #{result.orderId}</p>}
               <Link href="/orders" className="mt-3 inline-block text-sm text-green-400 underline">
                 View my orders
               </Link>
@@ -178,6 +214,15 @@ export default function ListingDetailPage() {
                 </span>
               </p>
 
+              <PaymentAssetPicker
+                listingCurrency={listing.currency}
+                value={paymentAsset}
+                onChange={setPayAsset}
+                quote={quoteQuery.data}
+                quoteLoading={quoteQuery.isFetching}
+                quoteError={quoteError}
+              />
+
               {error && <p className="text-sm text-red-400">{error}</p>}
 
               {!publicKey ? (
@@ -188,7 +233,12 @@ export default function ListingDetailPage() {
                 <button
                   type="button"
                   onClick={handlePlaceOrder}
-                  disabled={submitting || !listing.verified || maxUnits === 0}
+                  disabled={
+                    submitting ||
+                    !listing.verified ||
+                    maxUnits === 0 ||
+                    (converting && (!quoteQuery.data || Boolean(quoteError)))
+                  }
                   className="btn-primary inline-flex items-center gap-2 disabled:opacity-50"
                 >
                   {submitting && <Loader2 className="w-4 h-4 animate-spin" aria-hidden />}

@@ -49,7 +49,8 @@ function sorobanServer(): rpc.Server {
   return new rpc.Server(SOROBAN_RPC_URL, { allowHttp: false });
 }
 
-async function signWithWallet(xdr: string): Promise<string> {
+/** Sign a transaction envelope with the connected wallet (Freighter). */
+export async function signWithWallet(xdr: string): Promise<string> {
   const { walletType, network } = useWalletStore.getState();
   if (walletType === 'passkey') {
     throw new Error(
