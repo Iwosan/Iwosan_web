@@ -80,6 +80,8 @@ Copy `.env.example` to `.env.local` before running the app. Each variable is des
 | `NEXT_PUBLIC_API_URL`         | **Yes**  | —                                     | Backend REST API base URL. Provided by the backend team.                |
 | `NEXT_PUBLIC_STELLAR_NETWORK` | No       | `testnet`                             | Stellar network to connect to. Accepted values: `testnet` \| `mainnet`. |
 | `NEXT_PUBLIC_HORIZON_URL`     | No       | `https://horizon-testnet.stellar.org` | Horizon API endpoint used to submit transactions and query the ledger.  |
+| `NEXT_PUBLIC_SOROBAN_RPC_URL` | No       | `https://soroban-testnet.stellar.org` | Soroban RPC endpoint for marketplace escrow transactions.               |
+| `NEXT_PUBLIC_MARKETPLACE_CONTRACT_ID` | **Yes** | —                             | Contract id of the deployed `iwosan-marketplace` escrow contract.       |
 
 ### How to obtain each value
 

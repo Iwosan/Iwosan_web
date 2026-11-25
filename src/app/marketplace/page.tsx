@@ -2,6 +2,7 @@
 
 export const dynamic = 'force-dynamic';
 
+import Link from 'next/link';
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { BadgeCheck, Leaf, Pill, Search, Stethoscope, UserRound } from 'lucide-react';
@@ -31,7 +32,11 @@ export default function MarketplacePage() {
 
   const { data: listings = [], isLoading, isError } = useQuery({
     queryKey: ['marketplace', kind, search],
-    queryFn: () => fetchMarketplaceListings({ kind, search: search || undefined }),
+    queryFn: () =>
+      fetchMarketplaceListings({
+        ...(kind ? { kind } : {}),
+        ...(search ? { search } : {}),
+      }),
   });
 
   return (
@@ -78,7 +83,11 @@ export default function MarketplacePage() {
         {listings.map((listing) => (
           <li key={listing.id} className="card p-5">
             <div className="flex items-start justify-between gap-2">
-              <h2 className="font-semibold text-text-1">{listing.title}</h2>
+              <h2 className="font-semibold text-text-1">
+                <Link href={`/marketplace/${listing.id}`} className="hover:underline">
+                  {listing.title}
+                </Link>
+              </h2>
               {listing.verified && (
                 <BadgeCheck className="w-5 h-5 shrink-0 text-green-500" aria-label="Verified" />
               )}

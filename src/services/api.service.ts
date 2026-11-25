@@ -286,6 +286,30 @@ export interface MarketplaceListing {
   location?: string;
   regulatoryNumber?: string;
   verified: boolean;
+  /** Listing id returned by `create_listing`; required to place an order. */
+  onChainListingId?: string | null;
+  sellerStellarAddress?: string;
+}
+
+export type MarketplaceOrderStatus = 'escrowed' | 'released' | 'refunded';
+export type MarketplacePaymentStatus = 'unpaid' | 'paid';
+
+export interface MarketplaceOrder {
+  id: string;
+  onChainOrderId: string;
+  onChainListingId?: string | null;
+  buyerAddress: string;
+  sellerAddress: string;
+  units: number;
+  amount: string;
+  currency: string;
+  status: MarketplaceOrderStatus;
+  disputed: boolean;
+  paymentStatus: MarketplacePaymentStatus;
+  paidAt?: string | null;
+  txHash?: string | null;
+  createdAt: string;
+  listing?: MarketplaceListing | null;
 }
 
 /**
@@ -298,3 +322,30 @@ export const fetchMarketplaceListings = (
   filters: { kind?: ListingKind; mode?: TradeMode; search?: string } = {},
 ) =>
   api.get<MarketplaceListing[]>('/marketplace/listings', { params: filters }).then((r) => r.data);
+
+/**
+ * Fetch one marketplace listing, including its on-chain listing id.
+ * @param id - Listing id (UUID).
+ * @returns The {@link MarketplaceListing}.
+ * @throws {ApiError} On network failure or when the listing does not exist.
+ */
+export const fetchMarketplaceListing = (id: string) =>
+  api.get<MarketplaceListing>(`/marketplace/listings/${id}`).then((r) => r.data);
+
+/**
+ * Fetch the escrowed orders where the connected user is the buyer or seller.
+ * @param role - Which side of the orders to return.
+ * @returns Array of {@link MarketplaceOrder}.
+ * @throws {ApiError} On network failure or when the request is unauthenticated.
+ */
+export const fetchMarketplaceOrders = (role: 'buyer' | 'seller') =>
+  api.get<MarketplaceOrder[]>('/marketplace/orders', { params: { role } }).then((r) => r.data);
+
+/**
+ * Flag an escrowed order for admin resolution.
+ * @param id - Order id (UUID).
+ * @returns The updated {@link MarketplaceOrder}.
+ * @throws {ApiError} On network failure or when the caller is not a party to the order.
+ */
+export const openOrderDispute = (id: string) =>
+  api.post<MarketplaceOrder>(`/marketplace/orders/${id}/dispute`).then((r) => r.data);
