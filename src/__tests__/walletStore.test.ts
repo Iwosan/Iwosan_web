@@ -6,6 +6,8 @@ beforeEach(() => {
     publicKey: null,
     role: null,
     network: 'testnet',
+    walletType: null,
+    passkeyCredentialId: null,
   });
 });
 
@@ -59,5 +61,53 @@ describe('useWalletStore', () => {
     });
     expect(useWalletStore.getState().publicKey).toBe('GSECOND');
     expect(useWalletStore.getState().role).toBe('DOCTOR');
+  });
+
+  describe('passkey smart wallet', () => {
+    const CONTRACT = 'CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC';
+
+    it('records the wallet type as freighter for extension wallets', () => {
+      act(() => {
+        useWalletStore.getState().setWallet('GFREIGHTER', 'PATIENT');
+      });
+      expect(useWalletStore.getState().walletType).toBe('freighter');
+      expect(useWalletStore.getState().passkeyCredentialId).toBeNull();
+    });
+
+    it('stores the smart-wallet contract address and credential id', () => {
+      act(() => {
+        useWalletStore.getState().setPasskeyWallet(CONTRACT, 'DOCTOR', 'credential-abc');
+      });
+
+      const state = useWalletStore.getState();
+      expect(state.publicKey).toBe(CONTRACT);
+      expect(state.role).toBe('DOCTOR');
+      expect(state.walletType).toBe('passkey');
+      expect(state.passkeyCredentialId).toBe('credential-abc');
+    });
+
+    it('switching to a Freighter wallet clears the passkey credential', () => {
+      act(() => {
+        useWalletStore.getState().setPasskeyWallet(CONTRACT, 'PATIENT', 'credential-abc');
+        useWalletStore.getState().setWallet('GFREIGHTER', 'PATIENT');
+      });
+
+      expect(useWalletStore.getState().walletType).toBe('freighter');
+      expect(useWalletStore.getState().passkeyCredentialId).toBeNull();
+    });
+
+    it('disconnect clears the passkey wallet details', () => {
+      act(() => {
+        useWalletStore.getState().setPasskeyWallet(CONTRACT, 'PATIENT', 'credential-abc');
+      });
+      act(() => {
+        useWalletStore.getState().disconnect();
+      });
+
+      const state = useWalletStore.getState();
+      expect(state.publicKey).toBeNull();
+      expect(state.walletType).toBeNull();
+      expect(state.passkeyCredentialId).toBeNull();
+    });
   });
 });

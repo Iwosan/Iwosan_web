@@ -17,8 +17,10 @@ import {
   CheckCircle2,
   Wallet,
   AlertCircle,
+  Fingerprint,
 } from 'lucide-react';
 import { useToast } from '@/hooks/useToast';
+import { isPasskeySupported, signInWithPasskey } from '@/lib/passkey';
 import { useWalletStore } from '@/store/useWalletStore';
 import { ROLE_DASHBOARD_MAP } from '@/hooks/useRoleRedirect';
 
@@ -64,7 +66,7 @@ const trustPoints = [
 export default function LoginPage() {
   const router = useRouter();
   const { toast } = useToast();
-  const { publicKey, role: walletRole } = useWalletStore();
+  const { publicKey, role: walletRole, setPasskeyWallet } = useWalletStore();
   const [step, setStep] = useState<'role' | 'wallet'>('role');
   const [selectedRole, setSelectedRole] = useState<Role | null>(null);
   const [connecting, setConnecting] = useState<string | null>(null);
@@ -80,6 +82,30 @@ export default function LoginPage() {
   function handleRoleSelect(role: Role) {
     setSelectedRole(role);
     setStep('wallet');
+  }
+
+  async function handlePasskeySignIn() {
+    setConnecting('passkey');
+    setConnectError(null);
+    try {
+      const wallet = await signInWithPasskey();
+      setPasskeyWallet(
+        wallet.smartWalletAddress,
+        (selectedRole ?? 'PATIENT') as Role,
+        wallet.credentialId,
+      );
+      toast('Smart wallet unlocked with your passkey.', 'success');
+      router.push(selectedRole === 'DOCTOR' ? '/dashboard/doctor' : '/dashboard/patient');
+    } catch (err) {
+      const message =
+        err instanceof Error && err.message
+          ? err.message
+          : 'Passkey sign-in failed. Please try again.';
+      toast(message, 'error');
+      setConnectError(message);
+    } finally {
+      setConnecting(null);
+    }
   }
 
   async function handleWalletConnect(walletId: string) {
@@ -333,6 +359,51 @@ export default function LoginPage() {
               )}
 
               <div className="space-y-2.5 mb-5">
+                {isPasskeySupported() && (
+                  <>
+                    <button
+                      type="button"
+                      onClick={handlePasskeySignIn}
+                      disabled={!!connecting}
+                      aria-label="Continue with passkey"
+                      className="w-full text-left rounded-[12px] p-4 flex items-center justify-between transition-all duration-150 group disabled:opacity-50 disabled:cursor-not-allowed"
+                      style={{
+                        background: 'rgba(0,200,150,0.06)',
+                        border: '1px solid rgba(0,200,150,0.25)',
+                      }}
+                    >
+                      <div className="flex items-center gap-3.5">
+                        <div
+                          className="w-10 h-10 rounded-[10px] flex items-center justify-center shrink-0"
+                          style={{
+                            background: 'rgba(0,200,150,0.1)',
+                            border: '1px solid rgba(0,200,150,0.2)',
+                          }}
+                        >
+                          <Fingerprint className="w-[18px] h-[18px]" style={{ color: '#00C896' }} />
+                        </div>
+                        <div>
+                          <p className="text-sm font-semibold text-text-1">Continue with passkey</p>
+                          <p className="text-xs text-text-3">
+                            Sign in with your fingerprint or face ID — no seed phrase
+                          </p>
+                        </div>
+                      </div>
+                      {connecting === 'passkey' ? (
+                        <Loader2 className="w-4 h-4 animate-spin" style={{ color: '#00C896' }} />
+                      ) : (
+                        <ChevronRight className="w-4 h-4 text-text-3 group-hover:text-green-500 transition-colors" />
+                      )}
+                    </button>
+
+                    <div className="flex items-center gap-3 py-1">
+                      <div className="h-px flex-1" style={{ background: 'rgba(255,255,255,0.07)' }} />
+                      <span className="text-xs text-text-3">or use a wallet</span>
+                      <div className="h-px flex-1" style={{ background: 'rgba(255,255,255,0.07)' }} />
+                    </div>
+                  </>
+                )}
+
                 {wallets.map((wallet) => (
                   <button
                     key={wallet.id}

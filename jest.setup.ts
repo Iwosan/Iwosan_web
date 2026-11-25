@@ -1,5 +1,20 @@
 import '@testing-library/jest-dom';
 import { webcrypto } from 'node:crypto';
+import { TextDecoder, TextEncoder } from 'node:util';
+
+// jsdom does not provide TextEncoder/TextDecoder, which the Stellar SDK needs.
+if (typeof globalThis.TextEncoder === 'undefined') {
+  Object.defineProperty(globalThis, 'TextEncoder', {
+    value: TextEncoder,
+    configurable: true,
+  });
+}
+if (typeof globalThis.TextDecoder === 'undefined') {
+  Object.defineProperty(globalThis, 'TextDecoder', {
+    value: TextDecoder,
+    configurable: true,
+  });
+}
 
 // jsdom does not implement SubtleCrypto; polyfill with Node's Web Crypto implementation.
 if (typeof globalThis.crypto === 'undefined' || !globalThis.crypto.subtle) {
