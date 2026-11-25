@@ -4,7 +4,7 @@ import { Bell } from 'lucide-react';
 import { useNotifications } from '@/hooks/useNotifications';
 import { useWalletStore } from '@/store/useWalletStore';
 import { useToast } from '@/hooks/useToast';
-import { NotificationEvent } from '@/hooks/useNotifications';
+import { type NotificationEvent } from '@/hooks/useNotifications';
 
 export default function NotificationBell() {
   const { publicKey } = useWalletStore();

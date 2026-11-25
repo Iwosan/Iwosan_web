@@ -22,10 +22,6 @@ function useFocusTrap(ref: React.RefObject<HTMLElement | null>, onClose: () => v
 
     const focusables = () => el.querySelectorAll<HTMLElement>(focusableSelector);
     const first = () => focusables()[0];
-    const last = () => {
-      const f = focusables();
-      return f[f.length - 1];
-    };
 
     first()?.focus();
 

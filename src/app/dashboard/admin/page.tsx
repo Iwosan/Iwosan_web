@@ -2,7 +2,7 @@
 
 export const dynamic = 'force-dynamic';
 
-import { useState, useEffect } from 'react';
+import { useCallback, useState, useEffect } from 'react';
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
 import {
   Users,

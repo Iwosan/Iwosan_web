@@ -54,7 +54,7 @@ export default function MedicalRecordUpload({ patientAddress, onUploaded }: Prop
       setProgress('idle');
       toast('Record uploaded and encrypted successfully.', 'success');
       // Optimistic: invalidate records query so the list refreshes
-      queryClient.invalidateQueries({ queryKey: ['encryptedRecords', patientAddress] });
+      void queryClient.invalidateQueries({ queryKey: ['encryptedRecords', patientAddress] });
       onUploaded?.(record);
       if (inputRef.current) inputRef.current.value = '';
     },

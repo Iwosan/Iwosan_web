@@ -45,7 +45,7 @@
  */
 export async function encryptFile(file: File): Promise<{
   encryptedBuffer: ArrayBuffer;
-  iv: Uint8Array;
+  iv: Uint8Array<ArrayBuffer>;
   key: CryptoKey;
 }> {
   // extractable: true — required so the key can be exported/uploaded (see module docs above)

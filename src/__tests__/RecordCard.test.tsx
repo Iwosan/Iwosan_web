@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import RecordCard from '@/components/records/RecordCard';
-import { MedicalRecord } from '@/types';
+import { type MedicalRecord } from '@/types';
 import { shareRecord } from '@/services/api.service';
 
 jest.mock('@/services/api.service', () => ({
