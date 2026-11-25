@@ -2,7 +2,7 @@ import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import AppointmentCard from '@/components/doctor/AppointmentCard';
-import { Appointment, MedicalRecord } from '@/types';
+import { type Appointment, type MedicalRecord } from '@/types';
 import { updateAppointmentStatus, fetchRecords } from '@/services/api.service';
 
 jest.mock('@/services/api.service', () => ({

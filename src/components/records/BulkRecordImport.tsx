@@ -5,7 +5,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { bulkImportRecords } from '@/services/api.service';
 import { useToast } from '@/hooks/useToast';
 import type { BulkImportResponse } from '@/types';
-import { parseCSV, parseFHIR, validateRow, PreviewRow } from '@/lib/bulkRecordParser';
+import { parseCSV, parseFHIR, validateRow, type PreviewRow } from '@/lib/bulkRecordParser';
 import { Upload, FileText, X, AlertCircle, CheckCircle2, Loader2 } from 'lucide-react';
 
 interface Props {
@@ -34,7 +34,7 @@ export default function BulkRecordImport({ patientAddress, onComplete }: Props) 
     },
     onSuccess: (result) => {
       toast(`Import completed: ${result.imported} imported, ${result.failed} failed.`, 'success');
-      queryClient.invalidateQueries({ queryKey: ['encryptedRecords', patientAddress] });
+      void queryClient.invalidateQueries({ queryKey: ['encryptedRecords', patientAddress] });
       onComplete?.(result);
     },
     onError: (err: Error) => {
@@ -76,7 +76,7 @@ export default function BulkRecordImport({ patientAddress, onComplete }: Props) 
 
   function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
-    if (file) handleFile(file);
+    if (file) void handleFile(file);
   }
 
   function clearPreview() {

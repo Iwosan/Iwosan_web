@@ -22,7 +22,6 @@ import {
   Menu,
   X,
 } from 'lucide-react';
-import NotificationBell from '@/components/navigation/NotificationBell';
 import { useWalletStore } from '@/store/useWalletStore';
 import { useAuthStore } from '@/store/authStore';
 import { Avatar } from '@/components/ui/Avatar';

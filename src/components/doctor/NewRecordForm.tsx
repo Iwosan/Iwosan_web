@@ -61,7 +61,7 @@ export default function NewRecordForm({ patientAddress, onSuccess }: Props) {
       return record;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['doctor-appointments'] });
+      void queryClient.invalidateQueries({ queryKey: ['doctor-appointments'] });
       setForm({ diagnosis: '', prescription: '', notes: '' });
       onSuccess();
     },
