@@ -349,3 +349,33 @@ export const fetchMarketplaceOrders = (role: 'buyer' | 'seller') =>
  */
 export const openOrderDispute = (id: string) =>
   api.post<MarketplaceOrder>(`/marketplace/orders/${id}/dispute`).then((r) => r.data);
+
+/** Strict-receive path-payment quote for paying a listing with another asset. */
+export interface MarketplaceQuote {
+  listingId: string;
+  units: number;
+  /** Asset the buyer pays with, as `XLM` or `CODE:ISSUER`. */
+  sourceAsset: string;
+  /** Estimated amount of `sourceAsset` the buyer pays. */
+  sourceAmount: string;
+  /** Asset the listing is priced in, as `CODE:ISSUER`. */
+  destinationAsset: string;
+  destinationAmount: string;
+  /** Intermediate assets in the payment path. */
+  path: string[];
+  xdr: string | null;
+  expiresAt: string;
+}
+
+/**
+ * Quote paying for a listing with another asset (e.g. NGN or XLM). Requested
+ * without `sourceAccount`, so only the price and path are returned.
+ * @param params - Listing id, number of units and the asset the buyer pays with.
+ * @returns A {@link MarketplaceQuote}.
+ * @throws {ApiError} On network failure, or 404 when no payment path exists.
+ */
+export const fetchMarketplaceQuote = (params: {
+  listingId: string;
+  units: number;
+  sourceAsset: string;
+}) => api.get<MarketplaceQuote>('/marketplace/quotes', { params }).then((r) => r.data);
