@@ -1,10 +1,12 @@
 import { Address, nativeToScVal } from '@stellar/stellar-sdk';
+import { toStroops } from '@/lib/amounts';
 import { submitContractCall, type ContractCallResult } from '@/lib/soroban';
 import type { TreatmentCampaign } from '@/services/campaigns.service';
 import { useWalletStore } from '@/store/useWalletStore';
 
 const CROWDFUND_CONTRACT_ID = process.env.NEXT_PUBLIC_CROWDFUND_CONTRACT_ID || '';
-const STROOPS_PER_UNIT = BigInt(10_000_000);
+
+export { toStroops };
 
 /** What the campaign page should show, derived from funds and deadline. */
 export type CampaignPhase = 'open' | 'goal-reached' | 'refundable' | 'released' | 'refunded';
@@ -123,12 +125,6 @@ export function daysLeft(deadline: string, now: number = Date.now()): number {
     return 0;
   }
   return Math.ceil((time - now) / 86_400_000);
-}
-
-/** Convert a decimal amount (up to 7 dp) to stroops. */
-export function toStroops(amount: string): bigint {
-  const [whole = '0', fraction = ''] = String(amount).trim().split('.');
-  return BigInt(whole || '0') * STROOPS_PER_UNIT + BigInt((fraction + '0000000').slice(0, 7));
 }
 
 /**

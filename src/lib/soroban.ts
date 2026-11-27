@@ -55,6 +55,45 @@ async function waitForResult(server: rpc.Server, hash: string) {
 }
 
 /**
+ * Read a contract method by simulating it with the connected wallet as the
+ * source account. Nothing is signed or submitted.
+ */
+export async function readContractCall<T = unknown>(params: {
+  contractId: string;
+  method: string;
+  args: xdr.ScVal[];
+  /** Message shown when `contractId` is empty. */
+  missingContractMessage: string;
+}): Promise<T> {
+  const { publicKey } = useWalletStore.getState();
+  if (!publicKey) {
+    throw new Error('Connect a wallet to read on-chain data.');
+  }
+  if (!params.contractId) {
+    throw new Error(params.missingContractMessage);
+  }
+
+  const server = sorobanServer();
+  const account = await server.getAccount(publicKey);
+  const tx = new TransactionBuilder(account, {
+    fee: BASE_FEE,
+    networkPassphrase: NETWORK_PASSPHRASE,
+  })
+    .addOperation(new Contract(params.contractId).call(params.method, ...params.args))
+    .setTimeout(120)
+    .build();
+
+  const simulation = await server.simulateTransaction(tx);
+  if (rpc.Api.isSimulationError(simulation)) {
+    throw new Error(simulation.error);
+  }
+  if (!simulation.result) {
+    return null as T;
+  }
+  return scValToNative(simulation.result.retval) as T;
+}
+
+/**
  * Simulate, sign and submit a contract invocation with the connected wallet.
  *
  * Simulating first surfaces contract errors before the user is asked to sign.
