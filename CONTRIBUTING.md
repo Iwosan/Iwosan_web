@@ -1,6 +1,6 @@
 # Contributing to Iwosan
 
-Thank you for your interest in contributing! This guide will help you get your local environment running, understand our workflow, and submit high-quality pull requests.
+Thank you for your interest in contributing to this project! This guide will help you get your local environment running, understand our workflow, and submit high-quality pull requests.
 
 ---
 
